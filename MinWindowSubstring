@@ -1,0 +1,45 @@
+class Solution(object):
+    def minWindow(self, s, t):
+        """
+        :type s: str
+        :type t: str
+        :rtype: str
+        """
+        
+        if not s or not t:
+            return ""
+        
+        from collections import Counter,defaultdict
+        
+        
+        dict_window = {}
+        dict_t = Counter(t)
+        left_pointer = 0
+        right_pointer = 0
+        required_count  = len(dict_t)
+        formed = 0
+        
+        cache_window_details = (float("inf"),None,None)
+        
+        while (right_pointer < len(s)):
+            
+            character = s[right_pointer]
+            dict_window[character] = dict_window.get(character, 0) + 1
+            
+            if (character in dict_t) and (dict_window[character] == dict_t[character]) :
+                formed +=1         
+            
+            while left_pointer <= right_pointer and formed == required_count :
+                character = s[left_pointer]
+                
+                if ((right_pointer-left_pointer+1)< cache_window_details[0]):
+                    cache_window_details = (right_pointer-left_pointer+1,left_pointer,right_pointer)
+                    
+                dict_window[character] -= 1
+                if (character in dict_t) and (dict_window[character] < dict_t[character]) :
+                     formed -=1
+                left_pointer +=1
+            
+            right_pointer +=1
+        return "" if cache_window_details[0] == float("inf") else s[cache_window_details[1] : cache_window_details[2] + 1]
+        
